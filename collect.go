@@ -4,16 +4,19 @@ import (
 	"bytes"
 	"compress/gzip"
 	"fmt"
-	"github.com/icha024/go-collect-logs/sse"
-	"github.com/namsral/flag"
-	"gopkg.in/mcuadros/go-syslog.v2"
-	"gopkg.in/mcuadros/go-syslog.v2/format"
+	"go-collect-logs/sse"
+	"go-collect-logs/web"
 	"io"
+	"io/fs"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/namsral/flag"
+	"gopkg.in/mcuadros/go-syslog.v2"
+	"gopkg.in/mcuadros/go-syslog.v2/format"
 )
 
 // Gzip Compression
@@ -160,7 +163,8 @@ func main() {
 
 	http.Handle("/stream", broker)
 	// http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("web/build"))))
-	http.Handle("/", http.FileServer(http.Dir("./web/build")))
+	root, _ := fs.Sub(web.WebFiles, "build")
+	http.Handle("/", http.FileServer(http.FS(root))) //FileServer(http.Dir("./web/build"))
 	serverDetail := fmt.Sprintf("%s:%d", *host, *port)
 	log.Printf("Starting HTTP server on %s", serverDetail)
 	log.Fatal("HTTP server error: ", http.ListenAndServe(serverDetail, nil))
