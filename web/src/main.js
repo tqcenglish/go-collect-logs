@@ -1,5 +1,5 @@
-var streamEndPoint = 'http://localhost:3000/stream'
-var filterEndPoint = 'http://localhost:3000/filter'
+var streamEndPoint = '/stream'
+var filterEndPoint = '/filter'
 
 var filterVal = ''
 var source
